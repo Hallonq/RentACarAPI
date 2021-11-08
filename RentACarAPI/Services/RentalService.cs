@@ -1,7 +1,6 @@
 ﻿using RentACarAPI.Data;
+using RentACarAPI.Calculations;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace RentACarAPI.Services
@@ -29,36 +28,8 @@ namespace RentACarAPI.Services
             // registrera återlämning objekt.
             await _repo.RegisterReturnRental(returnRental);
             // räknar ut pris för hyrning.
-            return CalculatePrice(MyRental, returnRental);
-        }
-
-        public double CalculatePrice(Rental rental, ReturnRental returnRental)
-        {
-            switch (rental.Bilkategori.Bilkategorinamn.ToLower())
-            {
-                case "småbil":
-                    return
-             500 *
-             (returnRental.Datum - rental.Datum).TotalDays;
-
-                case "kombi":
-                    return
-              (1000 *
-              (returnRental.Datum - rental.Datum).TotalDays *
-              1.3) +
-              (10 * returnRental.Matarinstallning);
-
-                case "lastbil":
-                    return
-            (1500 *
-            (returnRental.Datum - rental.Datum).TotalDays *
-            1.5) +
-            (15 *
-            returnRental.Matarinstallning *
-            1.5);
-
-                default: throw new ArgumentOutOfRangeException();
-            }
+            PriceLogic priceLogic = new PriceLogic();
+            return priceLogic.CalculatePrice(MyRental, returnRental);
         }
     }
 }
